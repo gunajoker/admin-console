@@ -17,6 +17,7 @@ export type SalonRecord = {
   createdAt: string;
   updatedAt: string;
   status: SalonStatus;
+  imageUrl?: string;
   location?: string;
   hours?: string;
   imageCount?: string;
@@ -35,7 +36,9 @@ export function SalonCard({ salon }: SalonCardProps) {
       <div
         className={`salon-media ${salon.useImageCard ? "salon-media-image" : "salon-media-placeholder"}`}
       >
-        {salon.useImageCard ? (
+        {salon.useImageCard && salon.imageUrl ? (
+          <img className="salon-cover" src={salon.imageUrl} alt={salon.name} />
+        ) : salon.useImageCard ? (
           <div className="salon-cover-placeholder" aria-label={salon.name}>
             <span>{salon.name}</span>
           </div>

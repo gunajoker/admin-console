@@ -1,7 +1,17 @@
 import zulopeIcon from "../../assets/zulope-icon.png";
 import { CustomersNavIcon, SalonNavIcon } from "../icons/DashboardIcons";
 
-export function DashboardSidebar() {
+export type DashboardSection = "salons" | "customers";
+
+type DashboardSidebarProps = {
+  activeSection: DashboardSection;
+  onNavigate: (section: DashboardSection) => void;
+};
+
+export function DashboardSidebar({
+  activeSection,
+  onNavigate,
+}: DashboardSidebarProps) {
   return (
     <aside className="dashboard-sidebar" data-node-id="2:3">
       <div className="sidebar-brand">
@@ -24,14 +34,22 @@ export function DashboardSidebar() {
         aria-label="Primary navigation"
       >
         <button
-          className="sidebar-link sidebar-link-active"
+          className={`sidebar-link ${activeSection === "salons" ? "sidebar-link-active" : ""}`}
           type="button"
           data-node-id="2:7"
+          aria-current={activeSection === "salons" ? "page" : undefined}
+          onClick={() => onNavigate("salons")}
         >
           <SalonNavIcon />
           <span>Salons</span>
         </button>
-        <button className="sidebar-link" type="button" data-node-id="2:18">
+        <button
+          className={`sidebar-link ${activeSection === "customers" ? "sidebar-link-active" : ""}`}
+          type="button"
+          data-node-id="2:18"
+          aria-current={activeSection === "customers" ? "page" : undefined}
+          onClick={() => onNavigate("customers")}
+        >
           <CustomersNavIcon />
           <span>Customers</span>
         </button>
