@@ -1,14 +1,63 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import zulopeIcon from "../assets/zulope-icon.png";
+import { useAppDispatch } from '../app/hooks';
+import { setAuthToken } from '../features/auth/authSlice';
+import { useLoginAdminMutation } from '../services/adminApi';
 
-type AdminLoginPageProps = {
-  onSignIn: () => void;
-};
+export function AdminLoginPage() {
+  const dispatch = useAppDispatch();
+  const [loginAdmin, { isLoading }] = useLoginAdminMutation();
+  const [number, setNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-export function AdminLoginPage({ onSignIn }: AdminLoginPageProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSignIn();
+
+    if (!number.trim() || !password) {
+      setErrorMessage("Enter your number and password.");
+      return;
+    }
+
+    const parsedNumber = Number(number);
+
+    if (Number.isNaN(parsedNumber)) {
+      setErrorMessage("Enter a valid number.");
+      return;
+    }
+
+    setErrorMessage(null);
+
+    try {
+      const response = await loginAdmin({
+        number: parsedNumber,
+        password,
+      }).unwrap();
+
+      if (response.ok && response.token) {
+        dispatch(setAuthToken(response.token));
+        return;
+      }
+
+      setErrorMessage(response.error ?? "Login failed.");
+    } catch (error) {
+      const fallbackMessage = "Unable to reach the login service.";
+
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'data' in error &&
+        typeof error.data === 'object' &&
+        error.data !== null &&
+        'error' in error.data &&
+        typeof error.data.error === 'string'
+      ) {
+        setErrorMessage(error.data.error);
+        return;
+      }
+
+      setErrorMessage(fallbackMessage);
+    }
   };
 
   return (
@@ -32,18 +81,21 @@ export function AdminLoginPage({ onSignIn }: AdminLoginPageProps) {
           onSubmit={handleSubmit}
         >
           <div className="field-group" data-node-id="1:11">
-            <label htmlFor="email" data-node-id="1:12">
-              Email
+            <label htmlFor="number" data-node-id="1:12">
+              Number
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="Enter your email"
+              id="number"
+              name="number"
+              type="tel"
+              autoComplete="username"
+              inputMode="numeric"
+              placeholder="Enter your number"
               className="glass-input"
               data-node-id="1:14"
-              defaultValue=""
+              value={number}
+              onChange={(event) => setNumber(event.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -59,12 +111,23 @@ export function AdminLoginPage({ onSignIn }: AdminLoginPageProps) {
               placeholder="Enter your password"
               className="glass-input"
               data-node-id="1:19"
-              defaultValue=""
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              disabled={isLoading}
             />
           </div>
 
-          <button type="submit" className="sign-in-button" data-node-id="1:21">
-            Sign In
+          {errorMessage ? (
+            <p className="form-feedback">{errorMessage}</p>
+          ) : null}
+
+          <button
+            type="submit"
+            className="sign-in-button"
+            data-node-id="1:21"
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
       </section>
