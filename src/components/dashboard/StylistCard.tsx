@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import {
   BriefcaseIcon,
   ClockIcon,
@@ -14,6 +16,7 @@ export type StylistRecord = {
   workingHours: string;
   specialization: string;
   workingDays: string;
+  profilePic?: string;
 };
 
 type StylistCardProps = {
@@ -21,14 +24,53 @@ type StylistCardProps = {
 };
 
 export function StylistCard({ stylist }: StylistCardProps) {
+  const [showLightbox, setShowLightbox] = useState(false);
+
   return (
     <article className="stylist-card">
-      <div className="stylist-avatar">
-        <UserCircleIcon className="stylist-avatar-icon" />
+      <div
+        className="stylist-cover"
+        onClick={stylist.profilePic ? () => setShowLightbox(true) : undefined}
+        style={stylist.profilePic ? { cursor: "pointer" } : undefined}
+      >
+        {stylist.profilePic ? (
+          <img
+            className="stylist-cover-img"
+            src={stylist.profilePic}
+            alt={stylist.name}
+          />
+        ) : (
+          <UserCircleIcon className="stylist-cover-icon" />
+        )}
       </div>
 
-      <div className="stylist-info">
-        <div className="stylist-heading-row">
+      {showLightbox && stylist.profilePic
+        ? createPortal(
+            <div
+              className="lightbox-overlay"
+              onClick={() => setShowLightbox(false)}
+            >
+              <button
+                type="button"
+                className="lightbox-close"
+                onClick={() => setShowLightbox(false)}
+                aria-label="Close image"
+              >
+                &times;
+              </button>
+              <img
+                className="lightbox-img"
+                src={stylist.profilePic}
+                alt={stylist.name}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>,
+            document.body,
+          )
+        : null}
+
+      <div className="stylist-body">
+        <div className="stylist-heading">
           <h3 className="stylist-name">{stylist.name}</h3>
           <span
             className={`status-pill ${stylist.status === "Active" ? "status-pill-active" : "status-pill-inactive"}`}
@@ -37,31 +79,35 @@ export function StylistCard({ stylist }: StylistCardProps) {
           </span>
         </div>
 
-        <div className="stylist-meta-row">
-          <div className="stylist-meta-item">
-            <BriefcaseIcon className="stylist-meta-icon" />
+        <div className="stylist-stats">
+          <div className="stylist-stat">
+            <BriefcaseIcon className="stylist-stat-icon" />
             <span>{stylist.experience}</span>
           </div>
-          <div className="stylist-meta-item">
-            <StarIcon className="stylist-meta-icon" />
+          <div className="stylist-stat">
+            <StarIcon className="stylist-stat-icon" />
             <span>
               {stylist.rating} ({stylist.reviewCount} reviews)
             </span>
           </div>
-          <div className="stylist-meta-item">
-            <ClockIcon className="stylist-meta-icon" />
+          <div className="stylist-stat">
+            <ClockIcon className="stylist-stat-icon" />
             <span>{stylist.workingHours}</span>
           </div>
         </div>
 
-        <p className="stylist-detail">
-          <span className="stylist-detail-label">Specialization:</span>{" "}
-          {stylist.specialization}
-        </p>
-        <p className="stylist-detail">
-          <span className="stylist-detail-label">Working days:</span>{" "}
-          {stylist.workingDays}
-        </p>
+        <div className="stylist-details">
+          <div className="stylist-detail-row">
+            <span className="stylist-detail-label">Specialization</span>
+            <span className="stylist-detail-value">
+              {stylist.specialization}
+            </span>
+          </div>
+          <div className="stylist-detail-row">
+            <span className="stylist-detail-label">Working days</span>
+            <span className="stylist-detail-value">{stylist.workingDays}</span>
+          </div>
+        </div>
       </div>
     </article>
   );

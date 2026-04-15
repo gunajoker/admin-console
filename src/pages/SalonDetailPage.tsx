@@ -11,7 +11,11 @@ import {
 } from "../components/dashboard/StylistCard";
 import { ArrowLeftIcon } from "../components/icons/DashboardIcons";
 import { clearAuthToken } from "../features/auth/authSlice";
-import type { SalonApiItem } from "../services/adminApi";
+import {
+  useGetSalonStylistsQuery,
+  type SalonApiItem,
+  type StylistApiItem,
+} from "../services/adminApi";
 
 type SalonDetailTab =
   | "stylists"
@@ -30,57 +34,25 @@ const TABS: { key: SalonDetailTab; label: string }[] = [
   { key: "portfolio", label: "Portfolio" },
 ];
 
-function getWorkingDaysLabel(
-  businessHours?: SalonApiItem["businessHours"],
-): string {
-  if (!businessHours) return "";
-  const dayOrder = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-  return dayOrder
-    .filter((day) => {
-      const h = businessHours[day];
-      return h?.open && h?.close;
-    })
-    .join(", ");
-}
+function mapStylistToRecord(stylist: StylistApiItem): StylistRecord {
+  const hours = stylist.workingHours;
+  const hoursLabel =
+    hours?.start && hours?.end ? `${hours.start} - ${hours.end}` : "";
 
-function getWorkingHoursLabel(
-  businessHours?: SalonApiItem["businessHours"],
-): string {
-  if (!businessHours) return "";
-  const firstDay = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].find(
-    (day) => {
-      const h = businessHours[day];
-      return h?.open && h?.close;
-    },
-  );
-  if (!firstDay) return "";
-  const h = businessHours[firstDay];
-  return `${h?.open} - ${h?.close}`;
+  return {
+    name: stylist.name,
+    status: stylist.isActive ? "Active" : "Inactive",
+    experience: stylist.experienceYears
+      ? `${stylist.experienceYears} years exp`
+      : "N/A",
+    rating: String(stylist.rating ?? 0),
+    reviewCount: stylist.reviewsCount ?? 0,
+    workingHours: hoursLabel,
+    specialization: stylist.specialization?.join(", ") ?? "",
+    workingDays: stylist.workingDays?.join(", ") ?? "",
+    profilePic: stylist.profilePic || undefined,
+  };
 }
-
-// Mock stylists until a real API endpoint exists
-const MOCK_STYLISTS: StylistRecord[] = [
-  {
-    name: "Karnan A",
-    status: "Active",
-    experience: "5 years exp",
-    rating: "0",
-    reviewCount: 0,
-    workingHours: "10:00 - 19:00",
-    specialization: "Hair cut for men",
-    workingDays: "mon, tue, wed, thu, fri",
-  },
-  {
-    name: "Priya M",
-    status: "Active",
-    experience: "8 years exp",
-    rating: "4.5",
-    reviewCount: 23,
-    workingHours: "09:00 - 18:00",
-    specialization: "Hair cut for women, Hair coloring",
-    workingDays: "mon, tue, wed, thu, fri, sat",
-  },
-];
 
 type SalonDetailPageProps = {
   salon: SalonApiItem;
@@ -97,6 +69,8 @@ export function SalonDetailPage({
   const profileName =
     useAppSelector((state) => state.auth.profileName) ?? "Admin";
   const [activeTab, setActiveTab] = useState<SalonDetailTab>("stylists");
+  const stylistsQuery = useGetSalonStylistsQuery(salon._id);
+  const stylists = (stylistsQuery.data?.stylists ?? []).map(mapStylistToRecord);
 
   return (
     <main className="dashboard-shell">
@@ -142,9 +116,19 @@ export function SalonDetailPage({
           <div className="salon-detail-tab-content">
             {activeTab === "stylists" ? (
               <div className="stylist-list">
-                {MOCK_STYLISTS.map((stylist) => (
-                  <StylistCard key={stylist.name} stylist={stylist} />
-                ))}
+                {stylistsQuery.isLoading ? (
+                  <div className="salon-panel-state">Loading stylists...</div>
+                ) : stylistsQuery.isError ? (
+                  <div className="salon-panel-state salon-panel-state-error">
+                    Unable to load stylists.
+                  </div>
+                ) : stylists.length === 0 ? (
+                  <div className="salon-panel-state">No stylists found.</div>
+                ) : (
+                  stylists.map((stylist) => (
+                    <StylistCard key={stylist.name} stylist={stylist} />
+                  ))
+                )}
               </div>
             ) : (
               <div className="salon-panel-state">

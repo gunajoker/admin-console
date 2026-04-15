@@ -138,6 +138,29 @@ export type GetAdminCustomersParams = {
   search?: string;
 };
 
+export type StylistApiItem = {
+  _id: string;
+  stylistId: string;
+  salonId: string;
+  name: string;
+  profilePic?: string;
+  specialization?: string[];
+  preference?: string;
+  experienceYears?: number;
+  rating?: number;
+  reviewsCount?: number;
+  serviceIds?: string[];
+  workingDays?: string[];
+  workingHours?: { start?: string; end?: string };
+  breaks?: unknown[];
+  isActive?: boolean;
+};
+
+export type AdminStylistsResponse = {
+  ok: boolean;
+  stylists: StylistApiItem[];
+};
+
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: fetchBaseQuery({
@@ -185,11 +208,18 @@ export const adminApi = createApi({
         },
       }),
     }),
+    getSalonStylists: builder.query<AdminStylistsResponse, string>({
+      query: (salonId) => ({
+        url: "/admin/salons/stylists",
+        params: { salonId },
+      }),
+    }),
   }),
 });
 
 export const {
   useGetAdminCustomersQuery,
   useGetAdminSalonsQuery,
+  useGetSalonStylistsQuery,
   useLoginAdminMutation,
 } = adminApi;

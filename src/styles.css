@@ -1018,50 +1018,119 @@ select {
 
 .stylist-list {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .stylist-card {
   display: flex;
-  gap: 16px;
-  padding: 16px;
+  flex-direction: column;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
-.stylist-avatar {
+.stylist-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.stylist-cover {
   display: grid;
   place-items: center;
-  width: 80px;
-  height: 80px;
-  flex: 0 0 80px;
-  border-radius: 10px;
+  height: 200px;
   background: linear-gradient(135deg, #e9d4ff 0%, #dab2ff 100%);
+  overflow: hidden;
 }
 
-.stylist-avatar-icon {
-  width: 40px;
-  height: 40px;
+.stylist-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stylist-cover-icon {
+  width: 64px;
+  height: 64px;
   color: #9810fa;
 }
 
-.stylist-info {
-  flex: 1;
-  min-width: 0;
+.stylist-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
 }
 
-.stylist-heading-row {
+.stylist-heading {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
 }
 
 .stylist-name {
   margin: 0;
   font-size: 1.125rem;
-  font-weight: 500;
-  line-height: 1.555;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #101828;
+}
+
+.stylist-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.stylist-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  line-height: 1.428;
+  color: #4a5565;
+}
+
+.stylist-stat-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  color: #9810fa;
+}
+
+.stylist-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.stylist-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stylist-detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.333;
+  color: #6a7282;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stylist-detail-value {
+  font-size: 0.875rem;
+  line-height: 1.428;
   color: #101828;
 }
 
@@ -1075,37 +1144,44 @@ select {
   background: #f3f4f6;
 }
 
-.stylist-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 8px;
+/* ── Lightbox ── */
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  cursor: zoom-out;
 }
 
-.stylist-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.875rem;
-  line-height: 1.428;
-  color: #4a5565;
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  padding: 0;
+  font-size: 2rem;
+  line-height: 1;
+  color: #ffffff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 120ms ease;
 }
 
-.stylist-meta-icon {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 16px;
+.lightbox-close:hover {
+  opacity: 1;
 }
 
-.stylist-detail {
-  margin: 0 0 4px;
-  font-size: 0.875rem;
-  line-height: 1.428;
-  color: #4a5565;
-}
-
-.stylist-detail-label {
-  font-weight: 500;
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: default;
 }
 
 @media (max-width: 860px) {
@@ -1117,10 +1193,6 @@ select {
   .salon-detail-panel {
     margin-left: 20px;
     margin-right: 20px;
-  }
-
-  .stylist-card {
-    flex-direction: column;
   }
 }
 
