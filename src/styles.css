@@ -952,3 +952,193 @@ select {
     white-space: normal;
   }
 }
+
+/* ── Salon Detail Page ── */
+
+.salon-detail-header {
+  padding: 24px 40px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #4a5565;
+}
+
+.back-link:hover {
+  color: #101828;
+}
+
+.back-link-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.salon-detail-title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.333;
+  color: #101828;
+}
+
+.salon-detail-id {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4a5565;
+}
+
+.salon-detail-panel {
+  margin: 32px 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.salon-detail-tabs {
+  padding: 16px 24px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.salon-detail-tab-content {
+  padding: 24px;
+}
+
+/* ── Stylist Card ── */
+
+.stylist-list {
+  display: grid;
+  gap: 16px;
+}
+
+.stylist-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.stylist-avatar {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 80px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e9d4ff 0%, #dab2ff 100%);
+}
+
+.stylist-avatar-icon {
+  width: 40px;
+  height: 40px;
+  color: #9810fa;
+}
+
+.stylist-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.stylist-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stylist-name {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.555;
+  color: #101828;
+}
+
+.status-pill-active {
+  color: #008236;
+  background: #dcfce7;
+}
+
+.status-pill-inactive {
+  color: #364153;
+  background: #f3f4f6;
+}
+
+.stylist-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.stylist-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  line-height: 1.428;
+  color: #4a5565;
+}
+
+.stylist-meta-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.stylist-detail {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+  line-height: 1.428;
+  color: #4a5565;
+}
+
+.stylist-detail-label {
+  font-weight: 500;
+}
+
+@media (max-width: 860px) {
+  .salon-detail-header {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .salon-detail-panel {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .stylist-card {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .salon-detail-header {
+    padding: 16px;
+  }
+
+  .salon-detail-panel {
+    margin: 16px;
+  }
+
+  .salon-detail-tab-content {
+    padding: 16px;
+  }
+
+  .stylist-meta-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

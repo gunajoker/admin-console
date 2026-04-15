@@ -15,6 +15,7 @@ import {
 type SalonFilter = "all" | "active" | "incomplete";
 type SalonManagementPageProps = {
   onNavigate: (section: DashboardSection) => void;
+  onSelectSalon?: (salon: SalonApiItem) => void;
 };
 
 function formatDate(value: string) {
@@ -65,7 +66,10 @@ function mapSalonToCardRecord(salon: SalonApiItem): SalonRecord {
   };
 }
 
-export function SalonManagementPage({ onNavigate }: SalonManagementPageProps) {
+export function SalonManagementPage({
+  onNavigate,
+  onSelectSalon,
+}: SalonManagementPageProps) {
   const dispatch = useAppDispatch();
   const profileName =
     useAppSelector((state) => state.auth.profileName) ?? "Admin";
@@ -198,8 +202,22 @@ export function SalonManagementPage({ onNavigate }: SalonManagementPageProps) {
               <div className="salon-panel-state">No salons found.</div>
             ) : null}
             {!isLoading && !isError
-              ? salons.map((salon) => (
-                  <SalonCard key={salon.code} salon={salon} />
+              ? salons.map((salon, index) => (
+                  <SalonCard
+                    key={salon.code}
+                    salon={salon}
+                    onClick={
+                      onSelectSalon
+                        ? () => {
+                            const raw =
+                              selectedFilter === "active"
+                                ? activeSalonsQuery.data?.salons[index]
+                                : allSalonsQuery.data?.salons[index];
+                            if (raw) onSelectSalon(raw);
+                          }
+                        : undefined
+                    }
+                  />
                 ))
               : null}
           </div>

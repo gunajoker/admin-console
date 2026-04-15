@@ -26,13 +26,18 @@ export type SalonRecord = {
 
 type SalonCardProps = {
   salon: SalonRecord;
+  onClick?: () => void;
 };
 
-export function SalonCard({ salon }: SalonCardProps) {
+export function SalonCard({ salon, onClick }: SalonCardProps) {
   const isComplete = salon.status === "Complete";
 
   return (
-    <article className="salon-row">
+    <article
+      className="salon-row"
+      onClick={onClick}
+      style={onClick ? { cursor: "pointer" } : undefined}
+    >
       <div
         className={`salon-media ${salon.useImageCard ? "salon-media-image" : "salon-media-placeholder"}`}
       >
