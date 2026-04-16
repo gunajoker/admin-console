@@ -16,6 +16,7 @@ export type StylistRecord = {
   workingHours: string;
   specialization: string;
   workingDays: string;
+  services: string;
   profilePic?: string;
 };
 
@@ -107,6 +108,12 @@ export function StylistCard({ stylist }: StylistCardProps) {
             <span className="stylist-detail-label">Working days</span>
             <span className="stylist-detail-value">{stylist.workingDays}</span>
           </div>
+          {stylist.services && (
+            <div className="stylist-detail-row">
+              <span className="stylist-detail-label">Services</span>
+              <span className="stylist-detail-value">{stylist.services}</span>
+            </div>
+          )}
         </div>
       </div>
     </article>

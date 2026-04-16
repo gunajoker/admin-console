@@ -150,6 +150,7 @@ export type StylistApiItem = {
   rating?: number;
   reviewsCount?: number;
   serviceIds?: string[];
+  services?: { _id: string; name: string }[];
   workingDays?: string[];
   workingHours?: { start?: string; end?: string };
   breaks?: unknown[];
@@ -159,6 +160,27 @@ export type StylistApiItem = {
 export type AdminStylistsResponse = {
   ok: boolean;
   stylists: StylistApiItem[];
+};
+
+export type ServiceApiItem = {
+  _id: string;
+  serviceId: string;
+  salonId: string;
+  category: string;
+  name: string;
+  description: string;
+  durationMinutes: number;
+  price: number;
+  gender: string;
+  isAddon: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminServicesResponse = {
+  ok: boolean;
+  services: ServiceApiItem[];
 };
 
 export const adminApi = createApi({
@@ -214,12 +236,19 @@ export const adminApi = createApi({
         params: { salonId },
       }),
     }),
+    getSalonServices: builder.query<AdminServicesResponse, string>({
+      query: (salonId) => ({
+        url: "/admin/salons/services",
+        params: { salonId },
+      }),
+    }),
   }),
 });
 
 export const {
   useGetAdminCustomersQuery,
   useGetAdminSalonsQuery,
+  useGetSalonServicesQuery,
   useGetSalonStylistsQuery,
   useLoginAdminMutation,
 } = adminApi;

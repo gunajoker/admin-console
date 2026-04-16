@@ -6,14 +6,20 @@ import {
   type DashboardSection,
 } from "../components/dashboard/DashboardSidebar";
 import {
+  ServiceCard,
+  type ServiceRecord,
+} from "../components/dashboard/ServiceCard";
+import {
   StylistCard,
   type StylistRecord,
 } from "../components/dashboard/StylistCard";
 import { ArrowLeftIcon } from "../components/icons/DashboardIcons";
 import { clearAuthToken } from "../features/auth/authSlice";
 import {
+  useGetSalonServicesQuery,
   useGetSalonStylistsQuery,
   type SalonApiItem,
+  type ServiceApiItem,
   type StylistApiItem,
 } from "../services/adminApi";
 
@@ -50,7 +56,21 @@ function mapStylistToRecord(stylist: StylistApiItem): StylistRecord {
     workingHours: hoursLabel,
     specialization: stylist.specialization?.join(", ") ?? "",
     workingDays: stylist.workingDays?.join(", ") ?? "",
+    services: stylist.services?.map((s) => s.name).join(", ") ?? "",
     profilePic: stylist.profilePic || undefined,
+  };
+}
+
+function mapServiceToRecord(service: ServiceApiItem): ServiceRecord {
+  return {
+    name: service.name,
+    category: service.category,
+    description: service.description || "No description",
+    duration: `${service.durationMinutes} min`,
+    price: `₹${service.price}`,
+    gender: service.gender,
+    isAddon: service.isAddon,
+    status: service.isActive ? "Active" : "Inactive",
   };
 }
 
@@ -71,6 +91,16 @@ export function SalonDetailPage({
   const [activeTab, setActiveTab] = useState<SalonDetailTab>("stylists");
   const stylistsQuery = useGetSalonStylistsQuery(salon._id);
   const stylists = (stylistsQuery.data?.stylists ?? []).map(mapStylistToRecord);
+  const servicesQuery = useGetSalonServicesQuery(salon._id);
+  const services = (servicesQuery.data?.services ?? []).map(mapServiceToRecord);
+  const servicesByCategory = services.reduce<Record<string, ServiceRecord[]>>(
+    (acc, service) => {
+      const key = service.category || "Other";
+      (acc[key] ??= []).push(service);
+      return acc;
+    },
+    {},
+  );
 
   return (
     <main className="dashboard-shell">
@@ -128,6 +158,31 @@ export function SalonDetailPage({
                   stylists.map((stylist) => (
                     <StylistCard key={stylist.name} stylist={stylist} />
                   ))
+                )}
+              </div>
+            ) : activeTab === "services" ? (
+              <div>
+                {servicesQuery.isLoading ? (
+                  <div className="salon-panel-state">Loading services...</div>
+                ) : servicesQuery.isError ? (
+                  <div className="salon-panel-state salon-panel-state-error">
+                    Unable to load services.
+                  </div>
+                ) : services.length === 0 ? (
+                  <div className="salon-panel-state">No services found.</div>
+                ) : (
+                  Object.entries(servicesByCategory).map(
+                    ([category, items]) => (
+                      <div key={category} className="service-category-group">
+                        <h3 className="service-category-title">{category}</h3>
+                        <div className="stylist-list">
+                          {items.map((service) => (
+                            <ServiceCard key={service.name} service={service} />
+                          ))}
+                        </div>
+                      </div>
+                    ),
+                  )
                 )}
               </div>
             ) : (

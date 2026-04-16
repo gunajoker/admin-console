@@ -1014,6 +1014,20 @@ select {
   padding: 24px;
 }
 
+/* ── Service Category Group ── */
+
+.service-category-group {
+  margin-bottom: 24px;
+}
+
+.service-category-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: capitalize;
+}
+
 /* ── Stylist Card ── */
 
 .stylist-list {
